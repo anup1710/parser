@@ -8,9 +8,9 @@ module Parser
 
     parsed_content = Parser::LogContentParser.new(file.content).parse
 
-    parsed_content.each do |page, ip_addresses|
-      puts "#{page} #{ip_addresses.values.sum { |ip| ip[:count] }} visits"
-      puts "#{page} #{ip_addresses.values.size} unique views"
-    end
+    log_view_model = Parser::LogViewModel.new(parsed_content)
+    log_view_model.render_response
+
+    log_view_model.render_response(unique_page_views: true)
   end
 end
