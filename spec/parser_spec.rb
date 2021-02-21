@@ -17,4 +17,10 @@ describe Parser do
     valid_format_file = File.join(RSPEC_ROOT, 'fixtures/valid_format.log')
     expect { described_class.new(valid_format_file) }.not_to raise_error
   end
+
+  it 'reads the file content from valid file' do
+    parser = described_class.new(File.join(RSPEC_ROOT, 'fixtures/valid_format.log'))
+    expeected_content = ['/help_page/1 126.318.035.038\n', '/contact 184.123.665.067\n']
+    expect(parser.file_content).to eq(expeected_content)
+  end
 end

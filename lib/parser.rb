@@ -1,16 +1,25 @@
 # frozen_string_literal: true
 
-# loads the file from given path and validates
+# loads the file from given path, validates
+# and read the content from file
 class Parser
   SUPPORTED_FILE_FORMATS = ['.log'].freeze
 
   class FileNotFound < ArgumentError; end
 
   class InvalidFileFormat < ArgumentError; end
+  attr_reader :file_content
 
   def initialize(path)
     @path = path
     validate!
+
+    begin
+      file = File.open(path, 'r')
+      @file_content = file.readlines
+    ensure
+      file.close
+    end
   end
 
   private
