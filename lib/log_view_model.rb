@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Parser
-  # View model to render the reponse information for client based on request
+  # View model to render the response information for client based on request
   # such as unique page view response or number of page visits response
   class LogViewModel
     def initialize(parsed_content)

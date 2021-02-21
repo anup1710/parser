@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'file'
+require_relative 'log_content_parser'
+require_relative 'log_view_model'
+
 # parse the file and return the result view for client
 module Parser
   def self.call(path)
