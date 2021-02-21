@@ -2,16 +2,15 @@
 
 describe Parser do
   it 'throws an error when file not found on given path' do
-    unknown_file_path = '/unknown_path/non-existent'
     expect do
-      described_class.new(unknown_file_path)
-    end.to raise_error("file not found: #{unknown_file_path}")
+      described_class.new('/unknown_path/non-existent')
+    end.to raise_error(Parser::FileNotFound, 'Given file path does not exists.')
   end
 
   it 'throws an error when the file format is not supported' do
     incorrect_format_file = File.join(RSPEC_ROOT, 'fixtures/incorrect_format.json')
     expect { described_class.new(incorrect_format_file) }
-      .to raise_error("File format not allowed. Only '.log' extension files allowed")
+      .to raise_error(Parser::InvalidFileFormat, "File format not allowed. Only '.log' extension files allowed.")
   end
 
   it 'does not throw error for valid format file' do

@@ -4,6 +4,10 @@
 class Parser
   SUPPORTED_FILE_FORMATS = ['.log'].freeze
 
+  class FileNotFound < ArgumentError; end
+
+  class InvalidFileFormat < ArgumentError; end
+
   def initialize(path)
     @path = path
     validate!
@@ -17,12 +21,12 @@ class Parser
   end
 
   def validate_file_presence
-    raise "file not found: #{@path}" unless File.exist?(@path)
+    raise FileNotFound, 'Given file path does not exists.' unless File.exist?(@path)
   end
 
   def validate_file_format
     return if SUPPORTED_FILE_FORMATS.include?(File.extname(@path))
 
-    raise "File format not allowed. Only '.log' extension files allowed"
+    raise InvalidFileFormat, "File format not allowed. Only '.log' extension files allowed."
   end
 end
