@@ -1,32 +1,20 @@
 # frozen_string_literal: true
 
-# loads the file from given path and validates
-class Parser
-  SUPPORTED_FILE_FORMATS = ['.log'].freeze
+require_relative 'file'
+require_relative 'log_content_parser'
+require_relative 'log_view_model'
 
-  class FileNotFound < ArgumentError; end
+# parse the file and return the result view for client
+module Parser
+  def self.call(path)
+    file = Parser::File.new(path)
+    return puts file.errors.join("\n\n") unless file.valid?
 
-  class InvalidFileFormat < ArgumentError; end
+    parsed_content = Parser::LogContentParser.new(file.content).parse
 
-  def initialize(path)
-    @path = path
-    validate!
-  end
+    log_view_model = Parser::LogViewModel.new(parsed_content)
+    log_view_model.render_response
 
-  private
-
-  def validate!
-    validate_file_presence
-    validate_file_format
-  end
-
-  def validate_file_presence
-    raise FileNotFound, 'Given file path does not exists.' unless File.exist?(@path)
-  end
-
-  def validate_file_format
-    return if SUPPORTED_FILE_FORMATS.include?(File.extname(@path))
-
-    raise InvalidFileFormat, "File format not allowed. Only '.log' extension files allowed."
+    log_view_model.render_response(unique_page_views: true)
   end
 end

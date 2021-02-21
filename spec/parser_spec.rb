@@ -1,20 +1,24 @@
 # frozen_string_literal: true
 
 describe Parser do
-  it 'throws an error when file not found on given path' do
-    expect do
-      described_class.new('/unknown_path/non-existent')
-    end.to raise_error(Parser::FileNotFound, 'Given file path does not exists.')
-  end
+  describe '.call' do
+    it 'prints the errors for invalid path' do
+      log_file = File.join(RSPEC_ROOT, 'fixtures', 'non-existent.log')
+      expect($stdout).to receive(:puts).with('Given file path does not exists.')
+      Parser.call(log_file)
+    end
 
-  it 'throws an error when the file format is not supported' do
-    incorrect_format_file = File.join(RSPEC_ROOT, 'fixtures/incorrect_format.json')
-    expect { described_class.new(incorrect_format_file) }
-      .to raise_error(Parser::InvalidFileFormat, "File format not allowed. Only '.log' extension files allowed.")
-  end
+    it 'prints the errors for invalid log file' do
+      log_file = File.join(RSPEC_ROOT, 'fixtures', 'incorrect_format.json')
+      expect($stdout).to receive(:puts).with("File format not allowed. Only '.log' extension files allowed.")
+      Parser.call(log_file)
+    end
 
-  it 'does not throw error for valid format file' do
-    valid_format_file = File.join(RSPEC_ROOT, 'fixtures/valid_format.log')
-    expect { described_class.new(valid_format_file) }.not_to raise_error
+    it 'prints the page visits and unique page information for valid log file' do
+      log_file = File.join(RSPEC_ROOT, 'fixtures', 'test.log')
+      expect($stdout).to receive(:puts).with(%r{^/[a-zA-Z_]+/?[a-zA-Z_0-9]* \d+ visits}).exactly(2).times
+      expect($stdout).to receive(:puts).with(%r{^/[a-zA-Z_]+/?[a-zA-Z_0-9]* \d+ unique views}).exactly(2).times
+      Parser.call(log_file)
+    end
   end
 end
